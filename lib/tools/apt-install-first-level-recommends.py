@@ -3,8 +3,10 @@ import sys, os, apt, subprocess
 
 def auto_install(dependencies):
     for package in dependencies:
+        print(package)
         # Pick the first version that apt returns for installation
         target = package.target_versions[0].package
+        print(target)
         target.mark_install(from_user=False)
 
 recommends = False
@@ -43,14 +45,22 @@ cache = apt.Cache()
 
 for name in sys.argv[2:]:
     # XXX handle error if package is not actually a package, no installation candidate
+    print("testing " + name)
     try:
         package = cache[name]
+        print("1")
         package.mark_install()
+        print("2")
         candidate = package.candidate
+        print("3")
         if recommends:
+            print(candidate.recommends)
             auto_install(candidate.recommends)
+        print("4")
         if suggests:
             auto_install(candidate.suggests)
+            print(candidate.suggests)
+        print("5")
     except:
         print(name + " has no installation candidate.")
         sys.exit(4)
