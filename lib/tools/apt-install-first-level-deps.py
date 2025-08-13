@@ -1,6 +1,12 @@
 #! /usr/bin/python3
 import sys, os, apt, subprocess
 
+# TODO:
+# - make the script fully non-interactive
+# - test for versioned dependencies
+# - test for alternatives
+# - test for unavailable packages
+
 def auto_install(dependencies):
     for package in dependencies:
         print(package)
