@@ -19,8 +19,10 @@ function post_armbian_repo_customize_image__install_from_apa() {
 		XFCE|KDE|GNOME)
 			display_alert "installing ${DESKTOP_ENVIRONMENT^^} desktop environment" "${EXTENSION}: ${DESKTOP_ENVIRONMENT^^}" "info"
 			#chroot_sdcard_apt_get install --install-recommends=yes "armbian-desktop-${DESKTOP_ENVIRONMENT,,}"
+			chroot_sdcard_apt_get install --install-recommends=no "python3-apt"
 		        #python3 "${SRC}/lib/tools/apt-install-first-level-deps.py" "--args" "${ARTIFACTS_VAR_DICT[@]}" # to stdout
 		        python3 "${SRC}/lib/tools/apt-install-first-level-deps.py" "recommends" "armbian-desktop-${DESKTOP_ENVIRONMENT,,}"
+			# purge python3-apt and others
 			;;
 	esac
 }
