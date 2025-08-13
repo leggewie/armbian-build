@@ -6,6 +6,7 @@ import sys, os, apt, subprocess
 # - test for versioned dependencies
 # - test for alternatives
 # - test for unavailable packages
+# - handle error if $2ff is not actually a package name available for installation
 
 def auto_install(dependencies):
     for package in dependencies:
@@ -85,16 +86,18 @@ for change in sorted_changes:
         statuses.append("auto")
     print(f"\t{change.name} ({', '.join(statuses)})")
 print(f"{len(sorted_changes)} packages will be installed, upgraded, or removed.")
-try:
-    answer = input("Apply changes? (Press Enter to continue or Ctrl+C to cancel) ")
-    if answer.lower() in ["", "y", "yes"]:
-        cache.commit()
-    else:
-        print("\nOK, changes cancelled.")
-        sys.exit(1)
-except KeyboardInterrupt:
-    print("\nChanges cancelled.")
-    sys.exit(1)
+
+### do the following only in interactive mode, if so called
+#try:
+#    answer = input("Apply changes? (Press Enter to continue or Ctrl+C to cancel) ")
+#    if answer.lower() in ["", "y", "yes"]:
+#        cache.commit()
+#    else:
+#        print("\nOK, changes cancelled.")
+#        sys.exit(1)
+#except KeyboardInterrupt:
+#    print("\nChanges cancelled.")
+#    sys.exit(1)
 # the following does not work as expected
-except LockFailedException as e:
-    print("\nAnother process is managing the package cache at the moment.\n\n{e}")
+#except LockFailedException as e:
+#    print("\nAnother process is managing the package cache at the moment.\n\n{e}")
