@@ -14,14 +14,19 @@ function post_armbian_repo_customize_image__install_from_apa() {
 	[[ "${BUILD_MINIMAL,,}" =~ ^(true|yes)$ ]] && INSTALL_RECOMMENDS="no" || INSTALL_RECOMMENDS="yes"
 	chroot_sdcard_apt_get --install-recommends=$INSTALL_RECOMMENDS install "armbian-common armbian-bsp"
 
-	# install desktop environmnent if requested
-	case ${DESKTOP_ENVIRONMENT^^} in
+	# install desktop environment if requested
+	case ${APA_DESKTOP_ENVIRONMENT^^} in
 		XFCE|KDE|GNOME)
 			display_alert "installing ${DESKTOP_ENVIRONMENT^^} desktop environment" "${EXTENSION}: ${DESKTOP_ENVIRONMENT^^}" "info"
 			#chroot_sdcard_apt_get install --install-recommends=yes "armbian-desktop-${DESKTOP_ENVIRONMENT,,}"
-			chroot_sdcard_apt_get install --install-recommends=no "python3-apt"
+			run_host_command_logged cp "${SRC}/lib/tools/apt-install-first-level-deps.py" "${SDCARD}"/root/
 		        #python3 "${SRC}/lib/tools/apt-install-first-level-deps.py" "--args" "${ARTIFACTS_VAR_DICT[@]}" # to stdout
-		        python3 "${SRC}/lib/tools/apt-install-first-level-deps.py" "recommends" "armbian-desktop-${DESKTOP_ENVIRONMENT,,}"
+		        #chroot_sdcard python3 "${SRC}/lib/tools/apt-install-first-level-deps.py" "recommends" "armbian-desktop-${DESKTOP_ENVIRONMENT,,}"
+			chroot_sdcard_apt_get_update
+			chroot_sdcard_apt_get install --install-recommends=no "python3-apt armbian-desktop-${DESKTOP_ENVIRONMENT,,}"
+			chroot_sdcard apt policy base-files
+			chroot_sdcard dpkg -l "*${DESKTOP_ENVIRONMENT,,}*"
+		        chroot_sdcard python3 "/root/apt-install-first-level-deps.py" "recommends" "armbian-desktop-${DESKTOP_ENVIRONMENT,,}"
 			# purge python3-apt and others
 			;;
 	esac
