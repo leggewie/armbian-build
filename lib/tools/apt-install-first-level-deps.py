@@ -2,22 +2,27 @@
 import sys, os, apt, subprocess
 
 # TODO:
-# - make the script fully non-interactive
-# - test for versioned dependencies
-# - test for alternatives
-# - test for unavailable packages
-# - handle error if $2ff is not actually a package name available for installation
+# - make the script fully non-interactive - DONE
+# - now add back an interactive mode, toggled via how the script is called?
+# - FEATURE: add information in the comment how to test this via docker
+# - use recommends and suggests depending on the value of sys.argv[0] AKA name of the script
+
+# XXX:
+print("[DBG]: script was called as " + " ".join(sys.argv))
 
 def auto_install(dependencies):
     for package in dependencies:
-        print(package)
-        # Pick the first version that apt returns for installation
-        target = package.target_versions[0].package
-        print(target)
-        target.mark_install(from_user=False)
+        try:
+            # Pick the first version that apt returns for installation
+            target = package.target_versions[0].package
+            target.mark_install(from_user=False)
+        except:
+            print(str(package) + " was not marked for installation successfully")
 
 recommends = False
 suggests = False
+apt.apt_pkg.config.set("APT::Install-Recommends", "false")
+apt.apt_pkg.config.set("APT::Install-Suggests", "false")
 
 try:
     if os.geteuid() != 0:
@@ -44,32 +49,19 @@ except:
     print(f"Unknown error")
     sys.exit(3)
 
-# disable automatic installation of Suggests and Recommends
-apt.apt_pkg.config.set("APT::Install-Recommends", "false")
-apt.apt_pkg.config.set("APT::Install-Suggests", "false")
-
 cache = apt.Cache()
 
 for name in sys.argv[2:]:
-    # XXX handle error if package is not actually a package, no installation candidate
-    print("testing " + name)
     try:
         package = cache[name]
-        print("1")
         package.mark_install()
-        print("2")
         candidate = package.candidate
-        print("3")
         if recommends:
-            print(candidate.recommends)
             auto_install(candidate.recommends)
-        print("4")
         if suggests:
             auto_install(candidate.suggests)
-            print(candidate.suggests)
-        print("5")
     except:
-        print(name + " has no installation candidate.")
+        print(name + " was not installed successfully.")
         sys.exit(4)
 
 changes = cache.get_changes()
@@ -86,6 +78,9 @@ for change in sorted_changes:
         statuses.append("auto")
     print(f"\t{change.name} ({', '.join(statuses)})")
 print(f"{len(sorted_changes)} packages will be installed, upgraded, or removed.")
+
+# XXX: execute package installation unconditionally for now
+cache.commit()
 
 ### do the following only in interactive mode, if so called
 #try:
