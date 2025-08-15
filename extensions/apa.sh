@@ -26,7 +26,7 @@ function post_armbian_repo_customize_image__install_from_apa() {
 #			chroot_sdcard_apt_get install --no-install-recommends "python3-apt armbian-desktop-${APA_DESKTOP_ENVIRONMENT,,}"
 #			chroot_sdcard apt policy base-files
 #			chroot_sdcard dpkg -l "*${APA_DESKTOP_ENVIRONMENT,,}*"
-			chroot_sdcard apt policy armbian-common
+			chroot_sdcard apt policy armbian-common lightdm armbian-desktop-xfce || true
 		        chroot_sdcard python3 "/root/apt-install-first-level-deps.py" "recommends" "lightdm"
 		        chroot_sdcard python3 "/root/apt-install-first-level-deps.py" "recommends" "armbian-desktop-${APA_DESKTOP_ENVIRONMENT,,}"
 			# purge python3-apt and others
