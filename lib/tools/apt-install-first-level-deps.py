@@ -8,7 +8,7 @@ import sys, os, apt, subprocess
 # - use recommends and suggests depending on the value of sys.argv[0] AKA name of the script
 
 # XXX:
-print("[DBG]: script was called as " + " ".join(sys.argv))
+print("[DBG]: script was called as " + "#".join(sys.argv))
 
 def auto_install(dependencies):
     for package in dependencies:
