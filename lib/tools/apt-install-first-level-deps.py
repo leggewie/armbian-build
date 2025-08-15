@@ -24,6 +24,8 @@ suggests = False
 apt.apt_pkg.config.set("APT::Install-Recommends", "false")
 apt.apt_pkg.config.set("APT::Install-Suggests", "false")
 
+print("line 26")
+
 try:
     if os.geteuid() != 0:
         raise PermissionError("The script must be run as root!")
@@ -31,6 +33,7 @@ try:
     if len(sys.argv) < 3:
         raise IndexError("Insufficient arguments")
     if sys.argv[1] in "recommends":
+        print("line 36, recommends is True")
         recommends = True
     elif sys.argv[1] == "suggests":
         suggests = True
@@ -53,10 +56,14 @@ cache = apt.Cache()
 
 for name in sys.argv[2:]:
     try:
+        print("line 59")
         package = cache[name]
+        print("package is " + str(package))
         package.mark_install()
         candidate = package.candidate
+        print("candidate is " + str(candidate))
         if recommends:
+            print("line 62")
             auto_install(candidate.recommends)
         if suggests:
             auto_install(candidate.suggests)
