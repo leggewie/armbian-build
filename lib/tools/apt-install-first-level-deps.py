@@ -53,13 +53,17 @@ except:
     sys.exit(3)
 
 cache = apt.Cache()
+print("Updating apt cache, please wait")
+cache.update
+print("looking for package bash " + str(cache["bash"]))
 
 for name in sys.argv[2:]:
     try:
-        print("line 59")
+        print("line 59: " + str(name))
         package = cache[name]
         print("package is " + str(package))
         package.mark_install()
+        print("line 63")
         candidate = package.candidate
         print("candidate is " + str(candidate))
         if recommends:
