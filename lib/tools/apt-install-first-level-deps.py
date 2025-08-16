@@ -54,7 +54,7 @@ except:
 
 cache = apt.Cache()
 print("Updating apt cache, please wait")
-cache.update
+cache.update()
 print("looking for package bash " + str(cache["bash"]))
 
 for name in sys.argv[2:]:
