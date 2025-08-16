@@ -27,14 +27,8 @@ function post_armbian_repo_customize_image__install_from_apa() {
 			# XXX: there is a probably related problem with this stuff not being sandboxed -> [🐳|🚸] SDCARD /var/lib/apt/lists is not empty [ /var/lib/apt/lists :: 31 files ]
 
 			chroot_sdcard mkdir -pv /var/cache/apt/archives/ /var/cache/apt/archives/partial/
-#			chroot_sdcard touch /var/cache/apt/archives/lock
-#			chroot_sdcard python3 /root/apt-install-first-level-deps.py recommends lightdm
 			chroot_sdcard python3 /root/apt-install-first-level-deps.py recommends armbian-desktop-${APA_DESKTOP_ENVIRONMENT,,}
-			# purge python3-apt and others
-			ls -l "${SDCARD}"/root/apt-install-first-level-deps.py || true
-			file "${SDCARD}"/"/root/apt-install-first-level-deps.py" || true
-			rm -v "${SDCARD}"/"/root/apt-install-first-level-deps.py" && echo success
-			exit 1
+			rm -v "${SDCARD}"/root/apt-install-first-level-deps.py && sleep 30
 			;;
 	esac
 }
