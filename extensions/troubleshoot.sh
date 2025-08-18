@@ -6,6 +6,4 @@ function extension_prepare_config__apa() {
 
 function post_armbian_repo_customize_image__troubleshoot() {
 	chroot_sdcard find /var/cache/apt/
-	chroot_mount
-	chroot_sdcard find /var/cache/apt/
 }
